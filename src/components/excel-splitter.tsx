@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { FileUp, FileSpreadsheet, Download, Loader2, PackageCheck, XCircle, FileArchive, Settings } from 'lucide-react';
+import { FileUp, FileSpreadsheet, Download, Loader2, PackageCheck, XCircle, FileArchive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from "@/components/ui/progress";
@@ -29,7 +29,7 @@ export function ExcelSplitter() {
     const [errorMessage, setErrorMessage] = useState('');
     const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
     const [splitFileCount, setSplitFileCount] = useState(0);
-    const [dateColumn, setDateColumn] = useState('Date'); // Default date column name
+    const dateColumn = 'fecha_ola'; // Hardcoded date column name
 
     const { toast } = useToast();
 
@@ -173,16 +173,7 @@ export function ExcelSplitter() {
                                         <XCircle className="h-5 w-5" />
                                     </Button>
                                 </div>
-                                <div className="mt-4 space-y-2">
-                                     <Label htmlFor="date-column">Date Column Name</Label>
-                                     <Input 
-                                        id="date-column"
-                                        value={dateColumn} 
-                                        onChange={(e) => setDateColumn(e.target.value)}
-                                        placeholder="e.g., 'Date' or 'Timestamp'"
-                                     />
-                                </div>
-                                <Button size="lg" className="w-full mt-4" onClick={startProcessing} disabled={!file || !dateColumn}>
+                                <Button size="lg" className="w-full mt-4" onClick={startProcessing} disabled={!file}>
                                     <FileArchive className="mr-2 h-5 w-5" />
                                     Split File
                                 </Button>
