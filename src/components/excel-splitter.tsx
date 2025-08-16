@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FileUp, FileSpreadsheet, Download, Loader2, PackageCheck, XCircle, FileArchive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from "@/components/ui/progress";
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
 import { splitExcelFile } from '@/ai/flows/split-excel-flow';
@@ -154,7 +152,7 @@ export function ExcelSplitter() {
             default:
                 return (
                     <CardContent className="p-6">
-                        <div {...getRootProps()} className={cn("flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/80 transition-colors", isDragActive ? 'border-primary bg-accent/20' : 'border-border/50 bg-background/20')}>
+                        <div {...getRootProps()} className={cn("flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/80 transition-colors", isDragActive ? 'border-primary bg-accent/20' : 'border-border/50 bg-card')}>
                             <input {...getInputProps()} />
                             <FileUp className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-center text-muted-foreground">
@@ -187,8 +185,8 @@ export function ExcelSplitter() {
     return (
         <div className="flex flex-col items-center">
              <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">Separador Correciones_Sku</h1>
-                <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl font-headline">Separador Correciones_Sku</h1>
+                <p className="mt-4 text-lg max-w-2xl mx-auto">
                     Divide automáticamente tus archivos grandes de Excel en otros más pequeños, organizados por mes y año, con un solo clic.
                 </p>
             </div>
