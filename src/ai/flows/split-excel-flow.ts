@@ -16,7 +16,7 @@ const SplitExcelInputSchema = z.object({
   fileDataUri: z
     .string()
     .describe(
-      "An Excel file (.xlsx or .xls) as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "An Excel file (.xlsx or .xls) as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
   dateColumn: z.string().describe('The name of the column containing dates.'),
 });
@@ -70,7 +70,7 @@ const splitExcelFileFlow = ai.defineFlow(
       const newWorkbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'Sheet1');
       const wbout = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
-      const fileName = `Correciones_SKU_${key}-01.xlsx`;
+      const fileName = `Correcciones_SKU_${key}-01.xlsx`;
       zip.file(fileName, wbout);
       fileCount++;
     }
