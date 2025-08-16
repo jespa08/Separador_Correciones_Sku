@@ -2,37 +2,38 @@
 
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { FileUp, FileSpreadsheet, Download, Loader2, PackageCheck, XCircle, FileArchive } from 'lucide-react';
+import { FileUp, FileSpreadsheet, Download, Loader2, PackageCheck, XCircle, FileArchive, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from "@/components/ui/progress";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
+import { splitExcelFile } from '@/ai/flows/split-excel-flow';
 
 type Status = 'idle' | 'file_loaded' | 'processing' | 'success' | 'error';
 
-const progressSteps = [
-    { message: 'Uploading file...', progress: 10 },
-    { message: 'Analyzing dates and preparing files...', progress: 30 },
-    { message: 'Splitting into files...', progress: 60 },
-    { message: 'Zipping files...', progress: 90 },
-    { message: 'Done!', progress: 100 },
-];
+// Converts a file to a data URI
+const fileToDataUri = (file: File): Promise<string> => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+});
 
 export function ExcelSplitter() {
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<Status>('idle');
     const [progress, setProgress] = useState(0);
-    const [progressMessage, setProgressMessage] = useState('');
-    const [splitFileCount, setSplitFileCount] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
+    const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+    const [splitFileCount, setSplitFileCount] = useState(0);
+    const [dateColumn, setDateColumn] = useState('Date'); // Default date column name
 
     const { toast } = useToast();
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-
         if (fileRejections.length > 0) {
             setStatus('error');
             setErrorMessage('Invalid file type. Please upload an .xlsx or .xls file.');
@@ -47,6 +48,7 @@ export function ExcelSplitter() {
             setFile(acceptedFiles[0]);
             setStatus('file_loaded');
             setErrorMessage('');
+            setDownloadUrl(null);
         }
     }, [toast]);
 
@@ -65,47 +67,50 @@ export function ExcelSplitter() {
         return `${nameWithoutExtension}-split.zip`;
     }, [file]);
 
-    const startProcessing = () => {
+    const startProcessing = async () => {
         if (!file) return;
 
         setStatus('processing');
-        setProgress(0);
-        setProgressMessage('');
+        setProgress(10);
+        
+        try {
+            const fileDataUri = await fileToDataUri(file);
+            setProgress(30);
 
-        let step = 0;
-        intervalRef.current = setInterval(() => {
-            if (step < progressSteps.length) {
-                let currentStep = progressSteps[step];
-                setProgress(currentStep.progress);
-                let message = currentStep.message;
-                
-                if (message.includes('Splitting into files...')) {
-                    const count = Math.floor(Math.random() * 40) + 5;
-                    setSplitFileCount(count);
-                    message = `Splitting into ${count} files...`;
-                }
-                setProgressMessage(message);
-                step++;
-            } else {
-                if (intervalRef.current) clearInterval(intervalRef.current);
-                setStatus('success');
-            }
-        }, 1200);
+            const result = await splitExcelFile({ fileDataUri, dateColumn });
+            setProgress(90);
+
+            setDownloadUrl(result.zipDataUri);
+            setSplitFileCount(result.fileCount);
+            setProgress(100);
+            setStatus('success');
+
+        } catch (error) {
+            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+            setErrorMessage(`Processing failed: ${errorMessage}`);
+            setStatus('error');
+            toast({
+                title: "Processing Error",
+                description: `An error occurred while splitting the file. Please check the file and try again.`,
+                variant: "destructive",
+            });
+        }
     };
     
     const resetState = () => {
         setFile(null);
         setStatus('idle');
         setProgress(0);
-        setProgressMessage('');
-        setSplitFileCount(0);
         setErrorMessage('');
-        if (intervalRef.current) clearInterval(intervalRef.current);
+        setDownloadUrl(null);
+        setSplitFileCount(0);
     }
     
     const removeSelectedFile = () => {
         setFile(null);
         setStatus('idle');
+        setDownloadUrl(null);
     }
 
     const renderContent = () => {
@@ -114,7 +119,7 @@ export function ExcelSplitter() {
                 return (
                     <CardContent className="flex flex-col items-center justify-center text-center p-10 min-h-[340px]">
                         <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
-                        <p className="text-lg font-medium text-foreground mb-4">{progressMessage}</p>
+                        <p className="text-lg font-medium text-foreground mb-4">Processing your file...</p>
                         <Progress value={progress} className="w-full max-w-sm" />
                     </CardContent>
                 );
@@ -126,7 +131,7 @@ export function ExcelSplitter() {
                         <p className="text-muted-foreground mb-6">Your Excel file has been split into {splitFileCount} separate files.</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button size="lg" asChild className="bg-green-500 hover:bg-green-600 text-white">
-                                <a href="/placeholder.zip" download={downloadFileName}>
+                                <a href={downloadUrl!} download={downloadFileName}>
                                     <Download className="mr-2 h-5 w-5" />
                                     Download Zip
                                 </a>
@@ -140,7 +145,7 @@ export function ExcelSplitter() {
                     <CardContent className="text-center p-10 min-h-[340px] flex flex-col justify-center items-center">
                         <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
                         <h3 className="text-2xl font-bold mb-2">An Error Occurred</h3>
-                        <p className="text-muted-foreground mb-6">{errorMessage}</p>
+                        <p className="text-muted-foreground mb-6 max-w-sm">{errorMessage}</p>
                         <Button size="lg" variant="outline" onClick={resetState}>Try Again</Button>
                     </CardContent>
                 );
@@ -168,7 +173,16 @@ export function ExcelSplitter() {
                                         <XCircle className="h-5 w-5" />
                                     </Button>
                                 </div>
-                                <Button size="lg" className="w-full mt-4" onClick={startProcessing} disabled={!file}>
+                                <div className="mt-4 space-y-2">
+                                     <Label htmlFor="date-column">Date Column Name</Label>
+                                     <Input 
+                                        id="date-column"
+                                        value={dateColumn} 
+                                        onChange={(e) => setDateColumn(e.target.value)}
+                                        placeholder="e.g., 'Date' or 'Timestamp'"
+                                     />
+                                </div>
+                                <Button size="lg" className="w-full mt-4" onClick={startProcessing} disabled={!file || !dateColumn}>
                                     <FileArchive className="mr-2 h-5 w-5" />
                                     Split File
                                 </Button>
