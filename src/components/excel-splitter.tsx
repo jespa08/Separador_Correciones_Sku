@@ -36,10 +36,10 @@ export function ExcelSplitter() {
     const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
         if (fileRejections.length > 0) {
             setStatus('error');
-            setErrorMessage('Invalid file type. Please upload an .xlsx or .xls file.');
+            setErrorMessage('Tipo de archivo inválido. Por favor, sube un archivo .xlsx o .xls.');
             toast({
-                title: "Invalid File",
-                description: "Please upload a valid Excel file (.xlsx, .xls).",
+                title: "Archivo Inválido",
+                description: "Por favor, sube un archivo de Excel válido (.xlsx, .xls).",
                 variant: "destructive",
             });
             return;
@@ -87,12 +87,12 @@ export function ExcelSplitter() {
 
         } catch (error) {
             console.error(error);
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-            setErrorMessage(`Processing failed: ${errorMessage}`);
+            const errorMessage = error instanceof Error ? error.message : "Ocurrió un error desconocido.";
+            setErrorMessage(`El procesamiento falló: ${errorMessage}`);
             setStatus('error');
             toast({
-                title: "Processing Error",
-                description: `An error occurred while splitting the file. Please check the file and try again.`,
+                title: "Error de Procesamiento",
+                description: `Ocurrió un error al dividir el archivo. Por favor, revisa el archivo e inténtalo de nuevo.`,
                 variant: "destructive",
             });
         }
@@ -119,7 +119,7 @@ export function ExcelSplitter() {
                 return (
                     <CardContent className="flex flex-col items-center justify-center text-center p-10 min-h-[340px]">
                         <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
-                        <p className="text-lg font-medium text-foreground mb-4">Processing your file...</p>
+                        <p className="text-lg font-medium text-foreground mb-4">Procesando tu archivo...</p>
                         <Progress value={progress} className="w-full max-w-sm" />
                     </CardContent>
                 );
@@ -127,16 +127,16 @@ export function ExcelSplitter() {
                 return (
                      <CardContent className="text-center p-10 min-h-[340px] flex flex-col justify-center items-center">
                         <PackageCheck className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold mb-2">Success!</h3>
-                        <p className="text-muted-foreground mb-6">Your Excel file has been split into {splitFileCount} separate files.</p>
+                        <h3 className="text-2xl font-bold mb-2">¡Éxito!</h3>
+                        <p className="text-muted-foreground mb-6">Tu archivo de Excel ha sido dividido en {splitFileCount} archivos separados.</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button size="lg" asChild className="bg-green-500 hover:bg-green-600 text-white">
                                 <a href={downloadUrl!} download={downloadFileName}>
                                     <Download className="mr-2 h-5 w-5" />
-                                    Download Zip
+                                    Descargar Zip
                                 </a>
                             </Button>
-                             <Button size="lg" variant="outline" onClick={resetState}>Split Another File</Button>
+                             <Button size="lg" variant="outline" onClick={resetState}>Dividir Otro Archivo</Button>
                         </div>
                     </CardContent>
                 );
@@ -144,9 +144,9 @@ export function ExcelSplitter() {
                  return (
                     <CardContent className="text-center p-10 min-h-[340px] flex flex-col justify-center items-center">
                         <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold mb-2">An Error Occurred</h3>
+                        <h3 className="text-2xl font-bold mb-2">Ocurrió un Error</h3>
                         <p className="text-muted-foreground mb-6 max-w-sm">{errorMessage}</p>
-                        <Button size="lg" variant="outline" onClick={resetState}>Try Again</Button>
+                        <Button size="lg" variant="outline" onClick={resetState}>Intentar de Nuevo</Button>
                     </CardContent>
                 );
             case 'idle':
@@ -158,9 +158,9 @@ export function ExcelSplitter() {
                             <input {...getInputProps()} />
                             <FileUp className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-center text-muted-foreground">
-                                <span className="font-semibold text-primary">Click to upload</span> or drag and drop
+                                <span className="font-semibold text-primary">Haz clic para subir</span> o arrastra y suelta
                             </p>
-                            <p className="text-xs text-muted-foreground">Excel files (.xlsx, .xls) only</p>
+                            <p className="text-xs text-muted-foreground">Solo archivos de Excel (.xlsx, .xls)</p>
                         </div>
                         {file && (
                             <div className="mt-6">
@@ -175,7 +175,7 @@ export function ExcelSplitter() {
                                 </div>
                                 <Button size="lg" className="w-full mt-4" onClick={startProcessing} disabled={!file}>
                                     <FileArchive className="mr-2 h-5 w-5" />
-                                    Split File
+                                    Dividir Archivo
                                 </Button>
                             </div>
                         )}
@@ -187,9 +187,9 @@ export function ExcelSplitter() {
     return (
         <div className="flex flex-col items-center">
              <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">Datewise Excel Splitter</h1>
+                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl font-headline">Separador Correciones_Sku</h1>
                 <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                    Automatically split your large Excel files into smaller ones, organized by month and year, with a single click.
+                    Divide automáticamente tus archivos grandes de Excel en otros más pequeños, organizados por mes y año, con un solo clic.
                 </p>
             </div>
             <Card className="w-full shadow-lg">

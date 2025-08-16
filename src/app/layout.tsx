@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Datewise Excel Splitter',
-  description: 'Upload an Excel file to split it by date into multiple files.',
+  title: 'Separador Correciones_Sku',
+  description: 'Sube un archivo de Excel para dividirlo por fecha en múltiples archivos.',
 };
 
 export default function RootLayout({
