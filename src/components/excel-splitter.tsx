@@ -119,7 +119,7 @@ export function ExcelSplitter() {
                 return (
                     <CardContent className="flex flex-col items-center justify-center text-center p-10 min-h-[340px]">
                         <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
-                        <p className="text-lg font-medium text-foreground mb-4">Procesando tu archivo...</p>
+                        <p className="text-lg font-medium text-card-foreground mb-4">Procesando tu archivo...</p>
                         <Progress value={progress} className="w-full max-w-sm" />
                     </CardContent>
                 );
@@ -127,7 +127,7 @@ export function ExcelSplitter() {
                 return (
                      <CardContent className="text-center p-10 min-h-[340px] flex flex-col justify-center items-center">
                         <PackageCheck className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold mb-2">¡Éxito!</h3>
+                        <h3 className="text-2xl font-bold mb-2 text-card-foreground">¡Éxito!</h3>
                         <p className="text-muted-foreground mb-6">Tu archivo de Excel ha sido dividido en {splitFileCount} archivos separados.</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button size="lg" asChild className="bg-green-500 hover:bg-green-600 text-white">
@@ -144,7 +144,7 @@ export function ExcelSplitter() {
                  return (
                     <CardContent className="text-center p-10 min-h-[340px] flex flex-col justify-center items-center">
                         <XCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold mb-2">Ocurrió un Error</h3>
+                        <h3 className="text-2xl font-bold mb-2 text-card-foreground">Ocurrió un Error</h3>
                         <p className="text-muted-foreground mb-6 max-w-sm">{errorMessage}</p>
                         <Button size="lg" variant="outline" onClick={resetState}>Intentar de Nuevo</Button>
                     </CardContent>
@@ -154,7 +154,7 @@ export function ExcelSplitter() {
             default:
                 return (
                     <CardContent className="p-6">
-                        <div {...getRootProps()} className={cn("flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/80 transition-colors", isDragActive ? 'border-primary bg-accent' : 'border-border/50 bg-background')}>
+                        <div {...getRootProps()} className={cn("flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/80 transition-colors", isDragActive ? 'border-primary bg-accent/20' : 'border-border/50 bg-background/20')}>
                             <input {...getInputProps()} />
                             <FileUp className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-center text-muted-foreground">
@@ -167,7 +167,7 @@ export function ExcelSplitter() {
                                 <div className="flex items-center justify-between p-3 border rounded-lg bg-secondary/50">
                                     <div className="flex items-center gap-3 overflow-hidden">
                                         <FileSpreadsheet className="h-6 w-6 text-primary flex-shrink-0" />
-                                        <span className="font-medium truncate" title={file.name}>{file.name}</span>
+                                        <span className="font-medium truncate text-card-foreground" title={file.name}>{file.name}</span>
                                     </div>
                                     <Button variant="ghost" size="icon" onClick={removeSelectedFile}>
                                         <XCircle className="h-5 w-5" />
