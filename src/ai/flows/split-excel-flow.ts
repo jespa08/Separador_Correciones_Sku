@@ -70,7 +70,7 @@ const splitExcelFileFlow = ai.defineFlow(
       const newWorkbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'Sheet1');
       const wbout = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
-      const fileName = `correciones_SKU_${key}-01.xlsx`;
+      const fileName = `Correciones_SKU_${key}-01.xlsx`;
       zip.file(fileName, wbout);
       fileCount++;
     }
