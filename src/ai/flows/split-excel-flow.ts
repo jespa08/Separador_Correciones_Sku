@@ -68,7 +68,24 @@ const splitExcelFileFlow = ai.defineFlow(
     for (const key in groupedData) {
       const newSheet = XLSX.utils.json_to_sheet(groupedData[key]);
       const newWorkbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'Sheet1');
+      XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'Correcciones_Mensuales');
+
+      const weeklyCorrectionsHeaders = [
+        'accion',
+        'anio',
+        'semana',
+        'categoria',
+        'id_pdv',
+        'id_producto',
+        'codigo_barra',
+        'descripcion',
+        'precio_adj',
+        'cantidad_adj',
+        'pais',
+      ];
+      const weeklyCorrectionsSheet = XLSX.utils.aoa_to_sheet([weeklyCorrectionsHeaders]);
+      XLSX.utils.book_append_sheet(newWorkbook, weeklyCorrectionsSheet, 'Correcciones_Semanales');
+
       const wbout = XLSX.write(newWorkbook, { bookType: 'xlsx', type: 'array' });
       const fileName = `Correcciones_SKU_${key}-01.xlsx`;
       zip.file(fileName, wbout);
